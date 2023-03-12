@@ -76,21 +76,21 @@ FRESULT scan_files (
     UINT i;
     static FILINFO fno;
     char fullPath[50];
-    res = f_opendir( &dir, path );                       /* Open the directory */
+    res = f_opendir( &dir, path );                              /* Open the directory */
     if ( res == FR_OK ) {
         char fileName[50];
         memset( fileName, '\0', 50 );
         for ( ;; ) {
-            res = f_readdir( &dir, &fno );                   /* Read a directory item */
-            if ( res != FR_OK || fno.fname[0] == 0 ) break;  /* Break on error or end of dir */
-            if ( fno.fattrib & AM_DIR ) {                    /* It is a directory */
+            res = f_readdir( &dir, &fno );                      /* Read a directory item */
+            if ( res != FR_OK || fno.fname[0] == 0 ) break;         /* Break on error or end of dir */
+            if ( fno.fattrib & AM_DIR ) {                           /* It is a directory */
                 i = strlen( path );
                 sprintf( &path[i], "/%s", fno.fname );
-                res = scan_files( path, usbData );                    /* Enter the directory */
+                res = scan_files( path, usbData );                   /* Enter the directory */
                 if ( res != FR_OK ) break;
 
                 path[i] = 0;
-            } else {                                       /* It is a file. */
+            } else {                                                 /* It is a file. */
                 i = strlen( path );
                 sprintf( &fileName[0], "/%s", fno.fname );
             }
@@ -147,7 +147,6 @@ int main ( void ) {
     HAL_Delay( 2000 );
 
     // TODO: Exception control
-    // TODO: fix free()
 
 #if _TESTING_ == 0
     testing(sdcard);
@@ -167,61 +166,84 @@ int main ( void ) {
 
     while ( true ) {
         if ( usbDataReceived.isNewData ) {
+            char data[500] = { '\0' };
+            char reading[1000] = { '\0' };
+            UINT size = 0;
 
             sdcard.fresult = Mount_SD( &sdcard.fs, "" );
             if ( usbDataReceived.usbData.command == 'w' ) {
                 if ( sdcard.fresult == FR_OK ) {
-                    sdcard.fresult = CreateAndWriteFile_SD( &sdcard.file, usbDataReceived.usbData.fileName,
+                    sdcard.fresult = CreateAndWriteFile_SD( &sdcard.file,
+                                                            usbDataReceived.usbData.fileName,
                                                             usbDataReceived.usbData.content );
                 }
+
             } else if ( usbDataReceived.usbData.command == 'r' ) {
                 if ( sdcard.fresult == FR_OK ) {
-                    char reading[1000];
-                    UINT size = 0;
-                    sdcard.fresult = ReadFile_SD( &sdcard.file, usbDataReceived.usbData.fileName, reading, &size );
+                    sdcard.fresult = ReadFile_SD( &sdcard.file,
+                                                  usbDataReceived.usbData.fileName,
+                                                  reading,
+                                                  &size );
+                }
+
+                if ( sdcard.fresult == FR_OK ) {
                     reading[size] = '\0';
                     strcpy( usbDataReceived.usbData.content, reading );
-                    char data[200] = { '\0' };
-                    UnpackMSG( &usbDataReceived.usbData, data );
-                    size = strlen( data );
-                    CDC_Transmit_FS(( uint8_t * ) data, size );
-                    HAL_Delay( 1 );
                 }
+
+
             } else if ( usbDataReceived.usbData.command == 'd' ) {
                 if ( sdcard.fresult == FR_OK ) {
                     sdcard.fresult = EraseFile_SD( usbDataReceived.usbData.fileName );
                 }
+
+                if ( sdcard.fresult == FR_OK ) {
+                    reading[size] = '\0';
+                    strcpy( usbDataReceived.usbData.content, "Success\0" );
+                }
+
+
             } else if ( usbDataReceived.usbData.command == 'u' ) {
                 if ( sdcard.fresult == FR_OK ) {
                     // TODO: erase content
-                    sdcard.fresult = UpdateFile_SD( &sdcard.file, usbDataReceived.usbData.fileName,
+                    sdcard.fresult = UpdateFile_SD( &sdcard.file,
+                                                    usbDataReceived.usbData.fileName,
                                                     usbDataReceived.usbData.content );
                 }
-            } else if ( usbDataReceived.usbData.command == 'p' ) {// TODO: See all the usb files
-                char data[500];
-
-                char path[256];
-                struct USBData usbData;
-                memset( usbData.content, '\0', 100 );
-                memset( data, '\0', 500 );
 
                 if ( sdcard.fresult == FR_OK ) {
-                    strcpy( path, "LOGS\0" );
-                    sdcard.fresult = scan_files( path, &usbData );
+                    sdcard.fresult = ReadFile_SD( &sdcard.file,
+                                                  usbDataReceived.usbData.fileName,
+                                                  reading,
+                                                  &size );
                 }
 
-                usbData.command = 'p';
-                memset( usbData.fileName, '\0', strlen( usbData.fileName ));
-                strcpy( usbData.fileName, "?" );
-                UnpackMSG( &usbData, data );
+                if ( sdcard.fresult == FR_OK ) {
+                    reading[size] = '\0';
+                    strcpy( usbDataReceived.usbData.content, reading );
+                }
 
-                //TODO: garbage data at the end of the string
-                CDC_Transmit_FS(( uint8_t * ) data, strlen( data ));
-                HAL_Delay( 1 );
+            } else if ( usbDataReceived.usbData.command == 'p' ) {// TODO: See all the usb files
+
+                char path[256];
+                if ( sdcard.fresult == FR_OK ) {
+                    strcpy( path, "LOGS\0" );
+                    sdcard.fresult = scan_files( path, &usbDataReceived.usbData );
+                    strcpy( usbDataReceived.usbData.fileName, "-" );
+                }
+
             }
-
             Unmount_SD( "" );
             usbDataReceived.isNewData = false;
+
+            if ( sdcard.fresult != FR_OK ) {
+                usbDataReceived.usbData.command = 'e';
+            }
+            UnpackMSG( &usbDataReceived.usbData, data );
+
+            size = strlen( data );
+            CDC_Transmit_FS(( uint8_t * ) data, size );
+            HAL_Delay( 1 );
         }
 
         /* USER CODE END WHILE */
