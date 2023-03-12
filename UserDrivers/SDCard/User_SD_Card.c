@@ -2,6 +2,9 @@
 #include "stdlib.h"
 #include "User_SD_Card.h"
 
+// TOOD: store the messages in sdCard.message
+// first memset(sdcard.messsage, '\0', 100);
+
 FRESULT Mount_SD ( FATFS *fs, char *path ) {
     char *message = malloc( 50 * sizeof( char ));
     FRESULT result = f_mount( fs, path, 1 );
@@ -159,7 +162,6 @@ FRESULT EraseFile_SD ( char *pathName ) {
 
 FRESULT ReadFile_SD ( FIL *file, char *pathName, char *buff, UINT *bytesRead ) {
     UINT br = 0;
-    uint8_t size = f_size( file );
     char *message = malloc( 50 * sizeof( char ));
     BYTE buffer[1000]; //4096
     memset( buffer, '\0', 1000 );

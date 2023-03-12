@@ -15,7 +15,7 @@ typedef struct {
     FATFS fs;
     FIL file;
     FRESULT fresult;
-    char *message;
+    char message[100];
     UINT br, bw;
 } SDcardTypeDef;
 
