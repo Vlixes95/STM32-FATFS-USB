@@ -6,6 +6,10 @@ void PackMSG ( const char *stringToPack, uint32_t stringSize, struct USBDataRece
     bool init = false;
     uint8_t size = 0;
     uint8_t numOfFields = 0;
+
+    memset(usbDataReceived->usbData.fileName, '\0', 50);
+    memset(usbDataReceived->usbData.content, '\0', 1000);
+
     while ( i <= stringSize ) {
 
         if ( stringToPack[i] == '}' ) {
