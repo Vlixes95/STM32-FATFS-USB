@@ -20,6 +20,7 @@ FRESULT Mount_SD ( FATFS *fs, char *path ) {
 
 FRESULT Unmount_SD ( char *path ) {
     char *message = malloc( 50 * sizeof( char ));
+
     FRESULT result = f_unmount( path );
     if ( result == FR_OK ) {
         strncpy( message, "Successfully unmounted SD card...\n", 35 );
@@ -27,38 +28,28 @@ FRESULT Unmount_SD ( char *path ) {
         strncpy( message, "Error unmounting SD card...\n", 29 );
     }
 
-    //  CDC_Transmit_FS((uint8_t *)message, strlen(message));
-    HAL_Delay( 10 );
     free( message );
     return result;
 }
 
 FRESULT OpenFile ( FIL *file, char *pathName ) {
     char *message = malloc( 50 * sizeof( char ));
+
     FRESULT result = f_open( file, pathName, FA_CREATE_ALWAYS | FA_WRITE );
     if ( result == FR_OK ) {
-        strncpy( message, "Successfully opened the file...\n", 31 );
+        strncpy( message, "Successfully opened the file...\n", 31 ); // +1 ?
     } else {
         strncpy( message, "Error opening the file...\n", 25 );
     }
 
-    //  CDC_Transmit_FS((uint8_t *)message, strlen(message));
-    //  HAL_Delay(1);
     free( message );
     return result;
 }
 
 FRESULT CreateFileOnly_SD ( FIL *file, char *pathName ) {
     char *message = malloc( 50 * sizeof( char ));
-    FRESULT result = f_open( file, pathName, FA_CREATE_ALWAYS | FA_WRITE );
-    if ( result == FR_OK ) {
-        strncpy( message, "Successfully opened the file...\n", 31 );
-    } else {
-        strncpy( message, "Error opening the file...\n", 25 );
-    }
 
-    //  CDC_Transmit_FS((uint8_t *)message, strlen(message));
-    //  HAL_Delay(1);
+    FRESULT result = OpenFile ( file, pathName);
 
     if ( result == FR_OK ) {
         result = f_close( file );
@@ -69,8 +60,6 @@ FRESULT CreateFileOnly_SD ( FIL *file, char *pathName ) {
         }
     }
 
-    //  CDC_Transmit_FS((uint8_t *)message, strlen(message));
-    //  HAL_Delay(1);
     free( message );
     return result;
 }
@@ -80,15 +69,7 @@ FRESULT CreateAndWriteFile_SD ( FIL *file, char *pathName, char *buff ) {
     UINT bw;
     char *message = malloc( 80 * sizeof( char ));
 
-    FRESULT result = f_open( file, pathName, FA_CREATE_ALWAYS | FA_WRITE );
-    if ( result == FR_OK ) {
-        strncpy( message, "Successfully opened the file...\n", 31 + 1 );
-    } else {
-        strncpy( message, "Error opening the file...\n", 25 );
-    }
-
-    //  CDC_Transmit_FS((uint8_t *)message, strlen(message));
-    //  HAL_Delay(1);
+    FRESULT result = OpenFile ( file, pathName);
 
     if ( result == FR_OK ) {
         result = f_write( file, buff, strlen( buff ), &bw );
@@ -98,9 +79,6 @@ FRESULT CreateAndWriteFile_SD ( FIL *file, char *pathName, char *buff ) {
             strncpy( message, "Error writing the file...\n", 27 );
         }
 
-        //  CDC_Transmit_FS((uint8_t *)message, strlen(message));
-        //  HAL_Delay(1);
-
         if ( result == FR_OK ) {
             result = f_close( file );
             if ( result == FR_OK ) {
@@ -109,8 +87,6 @@ FRESULT CreateAndWriteFile_SD ( FIL *file, char *pathName, char *buff ) {
                 strncpy( message, "Error closing the file...\n", 27 );
             }
 
-            //  CDC_Transmit_FS((uint8_t *)message, strlen(message));
-            //  HAL_Delay(1);
         }
     }
 
@@ -122,15 +98,7 @@ FRESULT UpdateFile_SD ( FIL *file, char *pathName, char *buff ) {
     UINT bw;
     char *message = malloc( 80 * sizeof( char ));
 
-    FRESULT result = f_open( file, pathName, FA_OPEN_APPEND | FA_WRITE );
-    if ( result == FR_OK ) {
-        strncpy( message, "Successfully opened the file...\n", 33 );
-    } else {
-        strncpy( message, "Error opening the file...\n", 27 );
-    }
-
-    //  CDC_Transmit_FS((uint8_t *)message, strlen(message));
-    //  HAL_Delay(1);
+    FRESULT result = OpenFile ( file, pathName);
 
     if ( result == FR_OK ) {
         result = f_write( file, buff, strlen( buff ), &bw );
@@ -140,8 +108,6 @@ FRESULT UpdateFile_SD ( FIL *file, char *pathName, char *buff ) {
         } else {
             strncpy( message, "Error writing the file...\n", 27 );
         }
-        //  CDC_Transmit_FS((uint8_t *)message, strlen(message));
-        //  HAL_Delay(1);
 
         if ( result == FR_OK ) {
             result = f_close( file );
@@ -151,8 +117,6 @@ FRESULT UpdateFile_SD ( FIL *file, char *pathName, char *buff ) {
                 strncpy( message, "Error closing the file...\n", 27 );
             }
 
-            //    CDC_Transmit_FS((uint8_t *)message, strlen(message));
-            // HAL_Delay(1);
         }
     }
 
@@ -163,15 +127,8 @@ FRESULT UpdateFile_SD ( FIL *file, char *pathName, char *buff ) {
 FRESULT WriteFile_SD ( FIL *file, char *pathName, char *buff ) {
     UINT bw;
     char *message = malloc( 50 * sizeof( char ));
-    FRESULT result = f_open( file, pathName, FA_OPEN_APPEND | FA_WRITE );
-    if ( result == FR_OK ) {
-        strncpy( message, "Successfully opened the file...\n", 33 );
-    } else {
-        strncpy( message, "Error opening the file...\n", 27 );
-    }
 
-    //  CDC_Transmit_FS((uint8_t *)message, strlen(message));
-    //  HAL_Delay(1);
+    FRESULT result = OpenFile ( file, pathName);
 
     if ( result == FR_OK ) {
         result = f_write( file, buff, strlen( buff ), &bw );
@@ -180,8 +137,6 @@ FRESULT WriteFile_SD ( FIL *file, char *pathName, char *buff ) {
         } else {
             strncpy( message, "Error opening the file...\n", 27 );
         }
-        //  CDC_Transmit_FS((uint8_t *)message, strlen(message));
-        //  HAL_Delay(1);
     }
 
     free( message );
@@ -190,14 +145,13 @@ FRESULT WriteFile_SD ( FIL *file, char *pathName, char *buff ) {
 
 FRESULT EraseFile_SD ( char *pathName ) {
     char *message = malloc( 50 * sizeof( char ));
+
     FRESULT result = f_unlink( pathName );
     if ( result == FR_OK ) {
         strncpy( message, "Successfully deleted the file...\n", 34 );
     } else {
         strncpy( message, "Error deleting the file...\n", 28 );
     }
-    // CDC_Transmit_FS((uint8_t *)message, strlen(message));
-    // HAL_Delay(1);
 
     free( message );
     return result;
@@ -235,8 +189,6 @@ FRESULT ReadFile_SD ( FIL *file, char *pathName, char *buff, UINT *bytesRead ) {
             strncpy( message, "Error reading the file...\n", 25 );
         }
 
-        //    CDC_Transmit_FS((uint8_t *)message, strlen(message));
-        //    HAL_Delay(1);
 
         if ( result == FR_OK ) {
             result = f_close( file );
@@ -246,8 +198,6 @@ FRESULT ReadFile_SD ( FIL *file, char *pathName, char *buff, UINT *bytesRead ) {
                 strncpy( message, "Error closing the file...\n", 27 );
             }
 
-            //    CDC_Transmit_FS((uint8_t *)message, strlen(message));
-            //    HAL_Delay(1);
         }
     }
 
@@ -258,6 +208,7 @@ FRESULT ReadFile_SD ( FIL *file, char *pathName, char *buff, UINT *bytesRead ) {
 /* TODO: Add RTOS to check if sd card is connected*/
 FRESULT FileStatus_SD ( const char *fileName, FILINFO *fileInfo ) {
     char *message = malloc( 50 * sizeof( char ));
+
     FRESULT result = f_stat( fileName, fileInfo );
     if ( result == FR_OK ) {
         strncpy( message, "Successfully got the file status...\n", 37 );
@@ -265,8 +216,6 @@ FRESULT FileStatus_SD ( const char *fileName, FILINFO *fileInfo ) {
         strncpy( message, "Error getting file status...\n", 30 );
     }
 
-    // CDC_Transmit_FS((uint8_t *)message, strlen(message));
-    // HAL_Delay(1);
 
     free( message );
     return result;
@@ -274,6 +223,7 @@ FRESULT FileStatus_SD ( const char *fileName, FILINFO *fileInfo ) {
 
 FRESULT MKDIR_SD ( char *folder ) {
     char *message = malloc( 50 * sizeof( char ));
+
     FRESULT fresult = f_mkdir( folder );
     if ( fresult == FR_OK ) {
         strncpy( message, "Succsessfully creating a folder", 32 );
@@ -281,9 +231,7 @@ FRESULT MKDIR_SD ( char *folder ) {
         strncpy( message, "Error creating a folder...\n", 28 );
     }
 
-    // CDC_Transmit_FS((uint8_t *)message, strlen(message));
-    // HAL_Delay(1);
-
     free( message );
     return fresult;
 }
+
