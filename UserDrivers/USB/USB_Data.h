@@ -3,7 +3,16 @@
 
 #include "stdbool.h"
 
-// TODO struct with value and size?
+enum COMMANDS {
+    WRITE = 'w',
+    READ = 'r',
+    UPDATE = 'u',
+    DELETE = 'd',
+    PRINT = 'p',
+    ERROR = 'e'
+};
+
+// TODO: struct with value and size?
 
 struct USBData {
     char command;
