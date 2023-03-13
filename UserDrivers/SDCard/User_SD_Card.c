@@ -15,8 +15,6 @@ FRESULT Mount_SD ( FATFS *fs, char *path ) {
         strncpy( message, "Error mounting SD card...\n", 28 ); // 27 + 1
     }
 
-    //  CDC_Transmit_FS((uint8_t *)message, strlen(message));
-    //  HAL_Delay( 1 );
     free( message );
     return result;
 }
@@ -237,3 +235,42 @@ FRESULT MKDIR_SD ( char *folder ) {
     return fresult;
 }
 
+FRESULT scan_files (
+        char *path,        /* Start node to be scanned (***also used as work area***) */
+        struct USBData *usbData
+) {
+    FRESULT res;
+    DIR dir;
+    UINT i;
+    static FILINFO fno;
+    char fullPath[50];
+    res = f_opendir( &dir, path );                              /* Open the directory */
+    if ( res == FR_OK ) {
+        char fileName[50];
+        memset( fileName, '\0', 50 );
+        for ( ;; ) {
+            res = f_readdir( &dir, &fno );                      /* Read a directory item */
+            if ( res != FR_OK || fno.fname[0] == 0 ) break;         /* Break on error or end of dir */
+            if ( fno.fattrib & AM_DIR ) {                           /* It is a directory */
+                i = strlen( path );
+                sprintf( &path[i], "/%s", fno.fname );
+                res = scan_files( path, usbData );                   /* Enter the directory */
+                if ( res != FR_OK ) break;
+
+                path[i] = 0;
+            } else {                                                 /* It is a file. */
+                i = strlen( path );
+                sprintf( &fileName[0], "/%s", fno.fname );
+            }
+            i = strlen( path );
+            char copyPath[50];
+            strcpy( copyPath, path );
+            strcat( copyPath, fileName );
+            strcat( usbData->content, copyPath );
+            strcat( usbData->content, ";" );
+        }
+
+        f_closedir( &dir );
+    }
+    return res;
+}
