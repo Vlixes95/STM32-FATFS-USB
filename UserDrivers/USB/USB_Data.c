@@ -1,13 +1,11 @@
 #include "USB_Data.h"
 #include "string.h"
 
-char getCommand ( const struct USBDataReceived *usbData ) {
-    return usbData->usbData.command;
-}
+// TODO: strcpy to strcpy_s, strncpy to strncpy_s
 
-void setCommand ( struct USBDataReceived *usbData, char command ) {
-    usbData->usbData.command = command;
-}
+char getCommand ( const struct USBDataReceived *usbData ) { return usbData->usbData.command; }
+
+void setCommand ( struct USBDataReceived *usbData, char command ) { usbData->usbData.command = command; }
 
 char *getFileName ( const struct USBDataReceived *usbData ) { return ( char * ) usbData->usbData.fileName; }
 

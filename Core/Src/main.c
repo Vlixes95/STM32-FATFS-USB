@@ -66,47 +66,6 @@ static void MX_SDIO_SD_Init ( void );
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 void testing ( SDcardTypeDef sdcard );
-
-FRESULT scan_files (
-        char *path,        /* Start node to be scanned (***also used as work area***) */
-        struct USBData *usbData
-) {
-    FRESULT res;
-    DIR dir;
-    UINT i;
-    static FILINFO fno;
-    char fullPath[50];
-    res = f_opendir( &dir, path );                              /* Open the directory */
-    if ( res == FR_OK ) {
-        char fileName[50];
-        memset( fileName, '\0', 50 );
-        for ( ;; ) {
-            res = f_readdir( &dir, &fno );                      /* Read a directory item */
-            if ( res != FR_OK || fno.fname[0] == 0 ) break;         /* Break on error or end of dir */
-            if ( fno.fattrib & AM_DIR ) {                           /* It is a directory */
-                i = strlen( path );
-                sprintf( &path[i], "/%s", fno.fname );
-                res = scan_files( path, usbData );                   /* Enter the directory */
-                if ( res != FR_OK ) break;
-
-                path[i] = 0;
-            } else {                                                 /* It is a file. */
-                i = strlen( path );
-                sprintf( &fileName[0], "/%s", fno.fname );
-            }
-            i = strlen( path );
-            char copyPath[50];
-            strcpy( copyPath, path );
-            strcat( copyPath, fileName );
-            strcat( usbData->content, copyPath );
-            strcat( usbData->content, ";" );
-        }
-
-        f_closedir( &dir );
-    }
-    return res;
-}
-
 /* USER CODE END 0 */
 
 /**
@@ -166,19 +125,24 @@ int main ( void ) {
 
     while ( true ) {
         if ( usbDataReceived.isNewData ) {
+
+            // TODO: Extract the folder from the fileName
+
             char data[500] = { '\0' };
             char reading[1000] = { '\0' };
             UINT size = 0;
 
             sdcard.fresult = Mount_SD( &sdcard.fs, "" );
-            if ( usbDataReceived.usbData.command == 'w' ) {
+            if ( usbDataReceived.usbData.command == WRITE ) {
+
                 if ( sdcard.fresult == FR_OK ) {
                     sdcard.fresult = CreateAndWriteFile_SD( &sdcard.file,
                                                             usbDataReceived.usbData.fileName,
                                                             usbDataReceived.usbData.content );
                 }
 
-            } else if ( usbDataReceived.usbData.command == 'r' ) {
+            } else if ( usbDataReceived.usbData.command == READ ) {
+
                 if ( sdcard.fresult == FR_OK ) {
                     sdcard.fresult = ReadFile_SD( &sdcard.file,
                                                   usbDataReceived.usbData.fileName,
@@ -192,7 +156,8 @@ int main ( void ) {
                 }
 
 
-            } else if ( usbDataReceived.usbData.command == 'd' ) {
+            } else if ( usbDataReceived.usbData.command == DELETE ) {
+
                 if ( sdcard.fresult == FR_OK ) {
                     sdcard.fresult = EraseFile_SD( usbDataReceived.usbData.fileName );
                 }
@@ -202,8 +167,8 @@ int main ( void ) {
                     strcpy( usbDataReceived.usbData.content, "Success\0" );
                 }
 
+            } else if ( usbDataReceived.usbData.command == UPDATE ) {
 
-            } else if ( usbDataReceived.usbData.command == 'u' ) {
                 if ( sdcard.fresult == FR_OK ) {
                     // TODO: erase content
                     sdcard.fresult = UpdateFile_SD( &sdcard.file,
@@ -223,7 +188,7 @@ int main ( void ) {
                     strcpy( usbDataReceived.usbData.content, reading );
                 }
 
-            } else if ( usbDataReceived.usbData.command == 'p' ) {// TODO: See all the usb files
+            } else if ( usbDataReceived.usbData.command == PRINT ) {
 
                 char path[256];
                 if ( sdcard.fresult == FR_OK ) {
@@ -233,12 +198,14 @@ int main ( void ) {
                 }
 
             }
+
             Unmount_SD( "" );
             usbDataReceived.isNewData = false;
 
             if ( sdcard.fresult != FR_OK ) {
-                usbDataReceived.usbData.command = 'e';
+                usbDataReceived.usbData.command = ERROR;
             }
+
             UnpackMSG( &usbDataReceived.usbData, data );
 
             size = strlen( data );
