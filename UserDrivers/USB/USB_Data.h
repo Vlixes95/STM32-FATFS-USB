@@ -9,10 +9,15 @@ enum COMMANDS {
     UPDATE = 'u',
     DELETE = 'd',
     PRINT = 'p',
-    ERROR = 'e'
+    C_ERROR = 'e',
 };
 
 // TODO: struct with value and size?
+
+/* TODO: Use un union struct to add error message and error source
+ * if command: e
+ *    errorSource -> previous command
+ */
 
 struct USBData {
     char command;

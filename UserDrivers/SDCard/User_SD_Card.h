@@ -12,35 +12,39 @@ extern "C" {
 
 #define f_unmount( path ) f_mount(NULL, path, 0)
 
+#define MESSAGE_SIZE    200
+
 typedef struct {
     FATFS fs;
     FIL file;
-    FRESULT fresult;
-    char message[100];
+    FRESULT fResult;
+    char message[MESSAGE_SIZE];
     UINT br, bw;
 } SDcardTypeDef;
 
-FRESULT Mount_SD ( FATFS *fs, char *path );
+void Mount_SD ( SDcardTypeDef *sdcard, char *path );
 
-FRESULT Unmount_SD ( char *path );
+void Unmount_SD ( SDcardTypeDef *sdcard, const char *path );
 
-FRESULT CreateFileOnly_SD ( FIL *file, char *pathName );
+void CreateFileOnly_SD ( SDcardTypeDef *sdcard, char *pathName );
 
-FRESULT CreateAndWriteFile_SD ( FIL *file, char *pathName, char *buff );
+void CreateAndWriteFile_SD ( SDcardTypeDef *sdcard, char *pathName, char *buff );
 
-FRESULT UpdateFile_SD ( FIL *file, char *pathName, char *buff );
+void UpdateFile_SD ( SDcardTypeDef *sdcard, char *pathName, char *buff );
 
-FRESULT FileStatus_SD ( const char *fileName, FILINFO *fileInfo );
+void FileStatus_SD ( SDcardTypeDef *sdcard, const char *fileName, FILINFO *fileInfo );
 
-FRESULT EraseFile_SD ( char *pathName );
+void EraseFile_SD ( SDcardTypeDef *sdcard, char *pathName );
 
-FRESULT WriteFile_SD ( FIL *file, char *pathName, char *buff );
+void WriteFile_SD ( SDcardTypeDef *sdcard, char *pathName, char *buff );
 
-FRESULT ReadFile_SD ( FIL *file, char *pathName, char *buff, UINT *bytesRead );
+void ReadFile_SD ( SDcardTypeDef *sdcard, char *pathName, char *buff, UINT *bytesRead );
 
-FRESULT MKDIR_SD ( char *folder );
+void MKDIR_SD ( SDcardTypeDef *sdcard, char *folder );
 
-FRESULT scan_files ( char *path, struct USBData *usbData );
+void scan_files ( SDcardTypeDef *sdcard, char *path, struct USBData *usbData );
+
+void restartSDCard ( SDcardTypeDef *sdcard );
 
 #ifdef __cplusplus
 }

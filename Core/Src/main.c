@@ -46,7 +46,6 @@
 
 /* Private variables ---------------------------------------------------------*/
 SD_HandleTypeDef hsd;
-FILINFO info;
 uint8_t receiveBuffer[4096];
 struct USBDataReceived usbDataReceived;
 /* USER CODE BEGIN PV */
@@ -121,36 +120,36 @@ int main ( void ) {
     usbDataReceived.isNewData = false;
 
     // TODO: No está logs? Crea logs
-    MKDIR_SD( "logs\0" );
+    MKDIR_SD(&sdcard, "logs\0" );
 
     while ( true ) {
         if ( usbDataReceived.isNewData ) {
 
             // TODO: Extract the folder from the fileName
 
-            char data[500] = { '\0' };
+            char data[1000] = { '\0' };
             char reading[1000] = { '\0' };
             UINT size = 0;
 
-            sdcard.fresult = Mount_SD( &sdcard.fs, "" );
+            Mount_SD( &sdcard, "" );
             if ( usbDataReceived.usbData.command == WRITE ) {
 
-                if ( sdcard.fresult == FR_OK ) {
-                    sdcard.fresult = CreateAndWriteFile_SD( &sdcard.file,
-                                                            usbDataReceived.usbData.fileName,
-                                                            usbDataReceived.usbData.content );
+                if ( sdcard.fResult == FR_OK ) {
+                    CreateAndWriteFile_SD( &sdcard,
+                                           usbDataReceived.usbData.fileName,
+                                           usbDataReceived.usbData.content );
                 }
 
             } else if ( usbDataReceived.usbData.command == READ ) {
 
-                if ( sdcard.fresult == FR_OK ) {
-                    sdcard.fresult = ReadFile_SD( &sdcard.file,
-                                                  usbDataReceived.usbData.fileName,
-                                                  reading,
-                                                  &size );
+                if ( sdcard.fResult == FR_OK ) {
+                    ReadFile_SD( &sdcard,
+                                 usbDataReceived.usbData.fileName,
+                                 reading,
+                                 &size );
                 }
 
-                if ( sdcard.fresult == FR_OK ) {
+                if ( sdcard.fResult == FR_OK ) {
                     reading[size] = '\0';
                     strcpy( usbDataReceived.usbData.content, reading );
                 }
@@ -158,32 +157,32 @@ int main ( void ) {
 
             } else if ( usbDataReceived.usbData.command == DELETE ) {
 
-                if ( sdcard.fresult == FR_OK ) {
-                    sdcard.fresult = EraseFile_SD( usbDataReceived.usbData.fileName );
+                if ( sdcard.fResult == FR_OK ) {
+                    EraseFile_SD(&sdcard, usbDataReceived.usbData.fileName );
                 }
 
-                if ( sdcard.fresult == FR_OK ) {
+                if ( sdcard.fResult == FR_OK ) {
                     reading[size] = '\0';
                     strcpy( usbDataReceived.usbData.content, "Success\0" );
                 }
 
             } else if ( usbDataReceived.usbData.command == UPDATE ) {
 
-                if ( sdcard.fresult == FR_OK ) {
-                    // TODO: erase content
-                    sdcard.fresult = UpdateFile_SD( &sdcard.file,
-                                                    usbDataReceived.usbData.fileName,
-                                                    usbDataReceived.usbData.content );
+                if ( sdcard.fResult == FR_OK ) {
+                    // TODO: update or erase content
+                    UpdateFile_SD( &sdcard,
+                                   usbDataReceived.usbData.fileName,
+                                   usbDataReceived.usbData.content );
                 }
 
-                if ( sdcard.fresult == FR_OK ) {
-                    sdcard.fresult = ReadFile_SD( &sdcard.file,
-                                                  usbDataReceived.usbData.fileName,
-                                                  reading,
-                                                  &size );
+                if ( sdcard.fResult == FR_OK ) {
+                    ReadFile_SD( &sdcard,
+                                 usbDataReceived.usbData.fileName,
+                                 reading,
+                                 &size );
                 }
 
-                if ( sdcard.fresult == FR_OK ) {
+                if ( sdcard.fResult == FR_OK ) {
                     reading[size] = '\0';
                     strcpy( usbDataReceived.usbData.content, reading );
                 }
@@ -191,24 +190,30 @@ int main ( void ) {
             } else if ( usbDataReceived.usbData.command == PRINT ) {
 
                 char path[256];
-                if ( sdcard.fresult == FR_OK ) {
+                if ( sdcard.fResult == FR_OK ) {
                     strcpy( path, "LOGS\0" );
-                    sdcard.fresult = scan_files( path, &usbDataReceived.usbData );
+                    scan_files( &sdcard, path, &usbDataReceived.usbData );
                     strcpy( usbDataReceived.usbData.fileName, "-" );
                 }
 
+            } else {
+
+                usbDataReceived.usbData.command = C_ERROR;
+
             }
 
-            Unmount_SD( "" );
             usbDataReceived.isNewData = false;
-
-            if ( sdcard.fresult != FR_OK ) {
-                usbDataReceived.usbData.command = ERROR;
+            // TODO: Create a usbDataToSend
+            if ( sdcard.fResult != FR_OK ) {
+                usbDataReceived.usbData.command = C_ERROR;
+                strcpy( usbDataReceived.usbData.fileName, "-" );
+                strcpy( usbDataReceived.usbData.content, sdcard.message );
             }
 
             UnpackMSG( &usbDataReceived.usbData, data );
 
             size = strlen( data );
+            Unmount_SD( &sdcard, "" );
             CDC_Transmit_FS(( uint8_t * ) data, size );
             HAL_Delay( 1 );
         }
@@ -317,45 +322,45 @@ static void MX_GPIO_Init ( void ) {
 /* USER CODE BEGIN 4 */
 
 void testing ( SDcardTypeDef sdcard ) {
-    char reading[] = "";
+    char reading[1000] = "";
     UINT size = 0;
-    sdcard.fresult = Mount_SD( &sdcard.fs, "" );
+    Mount_SD( &sdcard, "" );
 
-    if ( sdcard.fresult == FR_OK ) {
-        sdcard.fresult = CreateAndWriteFile_SD( &sdcard.file, "file_1.txt", "Lorem ipsum dolor sit amet.\n" );
+    if ( sdcard.fResult == FR_OK ) {
+        CreateAndWriteFile_SD( &sdcard, "file_1.txt", "Lorem ipsum dolor sit amet.\n" );
     }
 
-    if ( sdcard.fresult == FR_OK ) {
-        sdcard.fresult = CreateAndWriteFile_SD( &sdcard.file, "file_2.txt", "Lorem ipsum dolor sit amet.\n" );
+    if ( sdcard.fResult == FR_OK ) {
+        CreateAndWriteFile_SD( &sdcard, "file_2.txt", "Lorem ipsum dolor sit amet.\n" );
     }
 
-    if ( sdcard.fresult == FR_OK ) {
-        sdcard.fresult = ReadFile_SD( &sdcard.file, "3.txt", reading, &size );
+    if ( sdcard.fResult == FR_OK ) {
+        ReadFile_SD( &sdcard, "3.txt", reading, &size );
         HAL_Delay( 1000 );
         CDC_Transmit_FS(( uint8_t * ) reading, size );
         HAL_Delay( 1 );
     }
 
-    if ( sdcard.fresult == FR_OK ) {
-        sdcard.fresult = UpdateFile_SD( &sdcard.file, "file_1.txt", "Bastante bien.\n" );
+    if ( sdcard.fResult == FR_OK ) {
+        UpdateFile_SD( &sdcard, "file_1.txt", "File created.\n" );
     }
 
-    if ( sdcard.fresult == FR_OK ) {
+    if ( sdcard.fResult == FR_OK ) {
         UINT bytes = 0;
-        sdcard.fresult = ReadFile_SD( &sdcard.file, "file_1.txt", reading, &bytes );
+        ReadFile_SD( &sdcard, "file_1.txt", reading, &bytes );
     }
 
-    if ( sdcard.fresult == FR_OK ) {
-        sdcard.fresult = EraseFile_SD( "file_2.txt" );
+    if ( sdcard.fResult == FR_OK ) {
+        EraseFile_SD(&sdcard, "file_2.txt" );
     }
 
-    MKDIR_SD( "folder" );
+    MKDIR_SD(&sdcard, "folder" );
 
-    if ( sdcard.fresult == FR_OK ) {
-        sdcard.fresult = CreateAndWriteFile_SD( &sdcard.file, "folder/file_1.txt", "Carpeta creada.\n" );
+    if ( sdcard.fResult == FR_OK ) {
+        CreateAndWriteFile_SD( &sdcard, "folder/file_1.txt", "Folder created.\n" );
     }
 
-    Unmount_SD( "" );
+    Unmount_SD( &sdcard, "" );
 }
 /* USER CODE END 4 */
 
