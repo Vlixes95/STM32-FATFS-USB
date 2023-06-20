@@ -190,7 +190,6 @@ void FileStatus_SD ( SDcardTypeDef *sdcard, const char *fileName, FILINFO *fileI
         strncpy( sdcard->message, "Error getting file status...\0", MESSAGE_SIZE );
     }
 
-
 }
 
 void MKDIR_SD ( SDcardTypeDef *sdcard, char *folder ) {
