@@ -10,8 +10,9 @@ The goal of this project is to communicate a STM32 microcontroller with a GUI vi
 
 I want to create a robot arm and to achieve this I am familiarizing myself with all the components that integrates it:
 
-- An SDCard for logs, configurations and other information
-- A GU to visually control and monitor the robotic arm while performing a task
+- An SD card for logs, configurations and other information
+- A GUI to visually control and monitor the robotic arm while performing a task
+  - [Serial Port and file generation](https://github.com/Vlixes95/Qt-Serial-Port) on the micro SD card
 - RTOS for better performance
 - LCD and buttons to configure and control the robot arm without a pc
 - IMU & encoders to receive feedback from the stepper motors
