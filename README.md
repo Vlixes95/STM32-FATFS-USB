@@ -41,26 +41,26 @@ In this project I'm developing the part where the robot arm will generate logs a
 
 - Clock Configuration
 
-  ![Clock Configuration](images/clock_config.png)
+  ![Clock Configuration](images/clock_config.PNG)
 
 - RCC
 
-  ![RCC](images/rcc.png)
+  ![RCC](images/rcc.PNG)
 
 - SDIO
 
-  ![RCC](images/sdio.png)
+  ![RCC](images/sdio.PNG)
 
-  ![RCC](images/sdio1.png)
+  ![RCC](images/sdio1.PNG)
 
 - FATFS
-  ![RCC](images/fatfs.png)
+  ![RCC](images/fatfs.PNG)
 
 - USB
-  ![RCC](images/usb.png)
+  ![RCC](images/usb.PNG)
 
 - USB DEVICE
-  ![RCC](images/usb_device.png)
+  ![RCC](images/usb_device.PNG)
 
 ## References
 
