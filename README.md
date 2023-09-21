@@ -2,17 +2,14 @@
 
 This is a simple project that involves STM32 microcontroller, FATFS and USB OTG.
 
-## GOAL
-
-The goal of this project is to communicate a STM32 microcontroller with a GUI via USB connection and create files in a microSD card.
-
-## Motivation
+### Motivation
 
 I want to create a robot arm and to achieve this I am familiarizing myself with all the components that integrates it:
 
-- An SD card for logs, configurations and other information
+- An SDCard for logs, configurations and other information
 - A GUI to visually control and monitor the robotic arm while performing a task
-  - [Serial Port and file generation](https://github.com/Vlixes95/Qt-Serial-Port) on the micro SD card
+  - [Serial port and file generation](https://github.com/Vlixes95/Qt-Serial-Port) on the micro SD card
+  - [Serial port with IMU](https://github.com/Vlixes95/QT_GUI_IMU) and 3d model
 - RTOS for better performance
 - LCD and buttons to configure and control the robot arm without a pc
 - IMU & encoders to receive feedback from the stepper motors
@@ -20,6 +17,12 @@ I want to create a robot arm and to achieve this I am familiarizing myself with 
 - Camera and object recognition to guide the robot arm
 
 In this project I'm developing the part where the robot arm will generate logs and configuration files.
+
+## GOAL
+
+The goal of this project is to communicate a STM32 microcontroller with a GUI via USB connection and create files in a microSD card.
+
+Error handling and performance improvements will be done when integrating all components, this project is just an introduction.
 
 ## Hardware
 
