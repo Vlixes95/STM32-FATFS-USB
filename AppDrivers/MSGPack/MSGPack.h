@@ -2,7 +2,7 @@
 #define __JSON__
 
 #include <stdint-gcc.h>
-#include "USB_Data.h"
+#include "../../AppDrivers/USB/USB_Data.h"
 
 void PackMSG ( const char *stringToPack, uint32_t stringSize, struct USBDataReceived *usbDataReceived );
 

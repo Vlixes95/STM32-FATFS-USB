@@ -197,9 +197,14 @@ void MKDIR_SD ( SDcardTypeDef *sdcard, char *folder ) {
     sdcard->fResult = f_mkdir( folder );
     if ( sdcard->fResult == FR_OK ) {
         strncpy( sdcard->message, "Succsessfully creating a folder", MESSAGE_SIZE );
-    } else {
+    }
+
+
+    if(sdcard->fResult != FR_EXIST){
         strncpy( sdcard->message, "Error creating a folder...\0", MESSAGE_SIZE );
     }
+
+    sdcard->fResult = FR_OK;
 
 }
 
