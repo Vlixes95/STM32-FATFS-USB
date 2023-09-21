@@ -18,11 +18,12 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "User_SD_Card.h"
+#include "../../AppDrivers/SDCard/User_SD_Card.h"
 #include "usb_device.h"
 #include "usbd_cdc_if.h"
-#include "MSGPack.h"
-#include "USB_Data.h"
+
+#include "../../AppDrivers/MSGPack/MSGPack.h"
+#include "../../AppDrivers/USB/USB_Data.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -119,7 +120,7 @@ int main ( void ) {
 
     usbDataReceived.isNewData = false;
 
-    // TODO: No está logs? Crea logs
+    Mount_SD( &sdcard, "" );
     MKDIR_SD(&sdcard, "logs\0" );
 
     while ( true ) {
@@ -129,9 +130,7 @@ int main ( void ) {
 
             char data[1000] = { '\0' };
             char reading[1000] = { '\0' };
-            UINT size = 0;
 
-            Mount_SD( &sdcard, "" );
             if ( usbDataReceived.usbData.command == WRITE ) {
 
                 if ( sdcard.fResult == FR_OK ) {
@@ -190,6 +189,7 @@ int main ( void ) {
             } else if ( usbDataReceived.usbData.command == PRINT ) {
 
                 char path[256];
+                path[0] = '\0';
                 if ( sdcard.fResult == FR_OK ) {
                     strcpy( path, "LOGS\0" );
                     scan_files( &sdcard, path, &usbDataReceived.usbData );
@@ -213,7 +213,6 @@ int main ( void ) {
             UnpackMSG( &usbDataReceived.usbData, data );
 
             size = strlen( data );
-            Unmount_SD( &sdcard, "" );
             CDC_Transmit_FS(( uint8_t * ) data, size );
             HAL_Delay( 1 );
         }
@@ -221,6 +220,7 @@ int main ( void ) {
         /* USER CODE END WHILE */
         /* USER CODE BEGIN 3 */
     }
+    Unmount_SD( &sdcard, "" );
     /* USER CODE END 3 */
 }
 
