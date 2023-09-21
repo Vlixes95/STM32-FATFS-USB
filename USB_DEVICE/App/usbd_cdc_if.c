@@ -23,9 +23,10 @@
 #include "usbd_cdc_if.h"
 
 /* USER CODE BEGIN INCLUDE */
-#include "MSGPack.h"
-#include "USB_Data.h"
+#include "../../AppDrivers/USB/USB_Data.h"
 #include "integer.h"
+
+#include "../../AppDrivers/MSGPack/MSGPack.h"
 /* USER CODE END INCLUDE */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -267,8 +268,12 @@ static int8_t CDC_Receive_FS ( uint8_t *Buf, uint32_t *Len ) {
     /* USER CODE BEGIN 6 */
     USBD_CDC_SetRxBuffer( &hUsbDeviceFS, &Buf[0] );
     USBD_CDC_ReceivePacket( &hUsbDeviceFS );
+
     memset( receiveBuffer, '\0', 4096 ); // all the buffer is set to '\0'
     memcpy( receiveBuffer, Buf, *Len );
+
+    memset(usbDataReceived.usbData.content, 0, 1000);
+    memset(usbDataReceived.usbData.fileName, 0, 50);
 
     PackMSG( receiveBuffer, ( uint8_t ) *Len, &usbDataReceived );
     usbDataReceived.isNewData = true;
