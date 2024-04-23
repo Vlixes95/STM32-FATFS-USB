@@ -1,6 +1,6 @@
-#include "../MSGPack/MSGPack.h"
+#include "msg_pack.h"
 
-#include "../../AppDrivers/SDCard/User_SD_Card.h"
+#include "../SDCard/user_sd_card.h"
 
 void PackMSG(const char *stringToPack, uint32_t stringSize, struct UsbDataReceived *usb_data_received) {
 	DWORD i = 0;

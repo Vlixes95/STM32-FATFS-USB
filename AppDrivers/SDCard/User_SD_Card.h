@@ -8,7 +8,7 @@ extern "C" {
 #include "fatfs.h"
 #include <string.h>
 #include <stdio.h>
-#include "../../AppDrivers/USB/USB_Data.h"
+#include "../USB/usb_data.h"
 
 #define f_unmount( path ) f_mount(NULL, path, 0)
 #define MAX_MESSAGE_SIZE        200

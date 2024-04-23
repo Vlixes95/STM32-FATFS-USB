@@ -23,10 +23,10 @@
 #include "usbd_cdc_if.h"
 
 /* USER CODE BEGIN INCLUDE */
-#include "../../AppDrivers/USB/USB_Data.h"
 #include "integer.h"
 
-#include "../../AppDrivers/MSGPack/MSGPack.h"
+#include "../../AppDrivers/MSGPack/msg_pack.h"
+#include "../../AppDrivers/USB/usb_data.h"
 /* USER CODE END INCLUDE */
 
 /* Private typedef -----------------------------------------------------------*/

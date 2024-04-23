@@ -1,6 +1,7 @@
+#include "user_sd_card.h"
+
 #include "string.h"
 #include "stdlib.h"
-#include "../../AppDrivers/SDCard/User_SD_Card.h"
 
 // TOOD: store the sdcard->messages in sdCard.sdcard->message
 // first memset(sdcard.messsage, '\0', 100);
