@@ -88,7 +88,7 @@ void ReadFile_SD ( SDcardTypeDef *sdcard, char *pathName, char *buff, UINT *byte
 
 void MKDIR_SD ( SDcardTypeDef *sdcard, char *folder );
 
-void scan_files ( SDcardTypeDef *sdcard, char *path, struct USBData *usbData );
+void scan_files ( SDcardTypeDef *sdcard, char *path, struct USBData *usb_data );
 
 void restartSDCard ( SDcardTypeDef *sdcard );
 

@@ -4,12 +4,12 @@
 #include "stdbool.h"
 
 enum COMMANDS {
-    WRITE = 'w',
-    READ = 'r',
-    UPDATE = 'u',
-    DELETE = 'd',
-    PRINT = 'p',
-    C_ERROR = 'e',
+	WRITE = 'w',
+	READ = 'r',
+	UPDATE = 'u',
+	DELETE = 'd',
+	PRINT = 'p',
+	C_ERROR = 'e',
 };
 
 // TODO: struct with value and size?
@@ -20,30 +20,30 @@ enum COMMANDS {
  */
 
 struct USBData {
-    char command;
-    char fileName[50];
-    char content[1000];
+	char command;
+	char fileName[50];
+	char content[1000];
 };
 
-struct USBDataReceived {
-    bool isNewData;
-    struct USBData usbData;
+struct UsbDataReceived {
+	bool is_new_data;
+	struct USBData usb_data;
 };
 
-void setCommand ( struct USBDataReceived *usbData, char command );
+void setCommand(struct UsbDataReceived *usb_data, char command);
 
-char getCommand ( const struct USBDataReceived *usbData );
+char getCommand(const struct UsbDataReceived *usb_data);
 
-void setFileName ( const struct USBDataReceived *usbData, const char *name );
+void setFileName(const struct UsbDataReceived *usb_data, const char *name);
 
-char *getFileName ( const struct USBDataReceived *usbData );
+char* getFileName(const struct UsbDataReceived *usb_data);
 
-void setContent ( const struct USBDataReceived *usbData, const char *content );
+void setContent(const struct UsbDataReceived *usb_data, const char *content);
 
-char *getContent ( const struct USBDataReceived *usbData );
+char* getContent(const struct UsbDataReceived *usb_data);
 
-bool IsNewData ( const struct USBDataReceived *usbData );
+bool is_new_data(const struct UsbDataReceived *usb_data);
 
-void setNewData ( struct USBDataReceived *usbData, bool data );
+void setNewData(struct UsbDataReceived *usb_data, bool data);
 
 #endif

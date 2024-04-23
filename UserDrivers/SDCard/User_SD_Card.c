@@ -203,7 +203,7 @@ void MKDIR_SD ( SDcardTypeDef *sdcard, char *folder ) {
 
 }
 
-void scan_files ( SDcardTypeDef *sdcard, char *path, struct USBData *usbData ) {
+void scan_files ( SDcardTypeDef *sdcard, char *path, struct USBData *usb_data ) {
 
     DIR dir;
     UINT i;
@@ -219,7 +219,7 @@ void scan_files ( SDcardTypeDef *sdcard, char *path, struct USBData *usbData ) {
             if ( fno.fattrib & AM_DIR ) {                           /* It is a directory */
                 i = strlen( path );
                 sprintf( &path[i], "/%s", fno.fname );
-                scan_files( sdcard, path, usbData );                   /* Enter the directory */
+                scan_files( sdcard, path, usb_data );                   /* Enter the directory */
                 if ( sdcard->fResult != FR_OK ) break;
 
                 path[i] = 0;
@@ -229,8 +229,8 @@ void scan_files ( SDcardTypeDef *sdcard, char *path, struct USBData *usbData ) {
             char copyPath[50];
             strcpy( copyPath, path );
             strcat( copyPath, fileName );
-            strcat( usbData->content, copyPath );
-            strcat( usbData->content, ";" );
+            strcat( usb_data->content, copyPath );
+            strcat( usb_data->content, ";" );
         }
 
         f_closedir( &dir );

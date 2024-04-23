@@ -35,8 +35,8 @@
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
-extern uint8_t receiveBuffer[4096];
-extern struct USBDataReceived usbDataReceived;
+extern uint8_t receive_buffer[4096];
+extern struct UsbDataReceived usb_data_received;
 /* USER CODE END PV */
 
 /** @addtogroup STM32_USB_OTG_DEVICE_LIBRARY
@@ -269,14 +269,16 @@ static int8_t CDC_Receive_FS ( uint8_t *Buf, uint32_t *Len ) {
     USBD_CDC_SetRxBuffer( &hUsbDeviceFS, &Buf[0] );
     USBD_CDC_ReceivePacket( &hUsbDeviceFS );
 
-    memset( receiveBuffer, '\0', 4096 ); // all the buffer is set to '\0'
-    memcpy( receiveBuffer, Buf, *Len );
+    if(*Len != 1 ){
+		memset( receive_buffer, '\0', 4096 ); // all the buffer is set to '\0'
+		memcpy( receive_buffer, Buf, *Len );
 
-    memset(usbDataReceived.usbData.content, 0, 1000);
-    memset(usbDataReceived.usbData.fileName, 0, 50);
+		memset(usb_data_received.usb_data.content, 0, 1000);
+		memset(usb_data_received.usb_data.fileName, 0, 50);
 
-    PackMSG( receiveBuffer, ( uint8_t ) *Len, &usbDataReceived );
-    usbDataReceived.isNewData = true;
+		PackMSG( receive_buffer, ( uint8_t ) *Len, &usb_data_received );
+		usb_data_received.is_new_data = true;
+    }
 
     return ( USBD_OK );
     /* USER CODE END 6 */
@@ -300,6 +302,8 @@ uint8_t CDC_Transmit_FS ( uint8_t *Buf, uint16_t Len ) {
     if ( hcdc->TxState != 0 ) {
         return USBD_BUSY;
     }
+
+    // HAND_CHECK
     USBD_CDC_SetTxBuffer( &hUsbDeviceFS, Buf, Len );
     result = USBD_CDC_TransmitPacket( &hUsbDeviceFS );
     /* USER CODE END 7 */
