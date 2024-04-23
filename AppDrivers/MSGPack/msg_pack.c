@@ -3,13 +3,14 @@
 #include "../SDCard/user_sd_card.h"
 
 void packMSG(const char *stringToPack, uint32_t stringSize, struct UsbDataReceived *usb_data_received) {
+
 	DWORD i = 0;
 	bool init = false;
 	uint8_t size = 0;
 	uint8_t numOfFields = 0;
 
-	memset(usb_data_received->usb_data.fileName, '\0', 50);
-	memset(usb_data_received->usb_data.content, '\0', 1000);
+	memset(usb_data_received->usb_data.fileName, '\0', FILE_NAME_MAX_LENGHT);
+	memset(usb_data_received->usb_data.content, '\0', CONTENT_MAX_LENGHT);
 
 	while (i <= stringSize) {
 
@@ -64,34 +65,40 @@ void packMSG(const char *stringToPack, uint32_t stringSize, struct UsbDataReceiv
 }
 
 void UnpackMSG(struct USBData *usb_data, char *textJson) {
-	char json[1000];
-	char tmp[1000];
-	memset(json, '\0', 1000);
-	strcat(json, "{");
-	uint8_t numOfFields = 0;
+
 	uint8_t size = 0;
+	uint8_t numOfFields = 0;
+	char json[1000] = {'\0'};
+	char tmp[1000] = {'\0'};
+
+	strncat(json, "{", 2);
+
 	for (int i = 0; i < 3; ++i) {
 
 		if (numOfFields == 0) {
 			tmp[0] = usb_data->command;
 			tmp[1] = '\0';
 		} else if (numOfFields == 1) {
-			strcpy(tmp, usb_data->fileName);
+			strncpy(tmp, usb_data->fileName, FILE_NAME_MAX_LENGHT);
 		} else if (numOfFields == 2) {
-			strcpy(tmp, usb_data->content);
+			strncpy(tmp, usb_data->content, CONTENT_MAX_LENGHT);
 		}
 		++numOfFields;
 
 		for (size = 0; tmp[size] != '\0'; ++size)
 			;
 
-		strcat(json, "L");
+		strncat(json, "L", 2);
+		
 		char snum[10];
 		itoa(size, snum, 10);
+
 		strcat(json, snum);
-		strcat(json, "C");
-		strcat(json, tmp);
+		strncat(json, "C", 2);
+		strncat(json, tmp, 1000);
 	}
-	strcat(json, "}");
-	strcpy(textJson, json);
+
+	strncat(json, "}", 2);
+	strncpy(textJson, json, 1000);
+
 }
