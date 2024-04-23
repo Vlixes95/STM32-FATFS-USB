@@ -121,6 +121,10 @@ int main(void) {
 	/* Infinite loop */
 	/* USER CODE BEGIN WHILE */
 
+	UINT size = 0;
+	char data[1000] = { '\0' };
+	char reading[1000] = { '\0' };
+
 	usb_data_received.is_new_data = false;
 
 	Mount_SD(&sdcard, "");
@@ -130,10 +134,6 @@ int main(void) {
 		if (usb_data_received.is_new_data) {
 
 			// TODO: Extract the folder from the fileName
-
-			UINT size = 0;
-			char data[1000] = { '\0' };
-			char reading[1000] = { '\0' };
 
 			if (usb_data_received.usb_data.command == WRITE) {
 
@@ -151,8 +151,8 @@ int main(void) {
 				}
 
 				if (sdcard.f_result == FR_OK) {
-					reading[size] = '\0';
-					strncpy(usb_data_received.usb_data.content, reading, CONTENT_MAX_LENGHT);
+					strncpy(usb_data_received.usb_data.content, reading,
+							CONTENT_MAX_LENGHT);
 				}
 
 			} else if (usb_data_received.usb_data.command == DELETE) {
@@ -162,8 +162,8 @@ int main(void) {
 				}
 
 				if (sdcard.f_result == FR_OK) {
-					reading[size] = '\0';
-					strncpy(usb_data_received.usb_data.content, "Success\0", CONTENT_MAX_LENGHT);
+					strncpy(usb_data_received.usb_data.content, "Success\0",
+							CONTENT_MAX_LENGHT);
 				}
 
 			} else if (usb_data_received.usb_data.command == UPDATE) {
@@ -180,8 +180,8 @@ int main(void) {
 				}
 
 				if (sdcard.f_result == FR_OK) {
-					reading[size] = '\0';
-					strncpy(usb_data_received.usb_data.content, reading, CONTENT_MAX_LENGHT);
+					strncpy(usb_data_received.usb_data.content, reading,
+							CONTENT_MAX_LENGHT);
 				}
 
 			} else if (usb_data_received.usb_data.command == PRINT) {
@@ -191,11 +191,13 @@ int main(void) {
 				if (sdcard.f_result == FR_OK) {
 					strncpy(path, "LOGS", 5);
 					scan_files(&sdcard, path, &usb_data_received.usb_data);
-					strncpy(usb_data_received.usb_data.fileName, "-", FILE_NAME_MAX_LENGHT);
+					strncpy(usb_data_received.usb_data.fileName, "-",
+							FILE_NAME_MAX_LENGHT);
 				}
 
 			} else {
 				usb_data_received.usb_data.command = C_ERROR;
+				break;
 			}
 
 			usb_data_received.is_new_data = false;
@@ -203,14 +205,20 @@ int main(void) {
 			// TODO: Create a usbDataToSend
 			if (sdcard.f_result != FR_OK) {
 				usb_data_received.usb_data.command = C_ERROR;
-				strncpy(usb_data_received.usb_data.fileName, "-", FILE_NAME_MAX_LENGHT);
-				strncpy(usb_data_received.usb_data.content, sdcard.message, CONTENT_MAX_LENGHT);
+				strncpy(usb_data_received.usb_data.fileName, "-",
+						FILE_NAME_MAX_LENGHT);
+				strncpy(usb_data_received.usb_data.content, sdcard.message,
+						CONTENT_MAX_LENGHT);
 			}
 
 			UnpackMSG(&usb_data_received.usb_data, data);
 
 			size = strlen(data);
 			CDC_Transmit_FS((uint8_t*) data, size);
+			size = 0;
+			memset(data, '\0');
+			memset(reading, '\0');
+
 			HAL_Delay(1);
 		}
 
