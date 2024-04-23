@@ -1,10 +1,6 @@
 #ifndef __USER_SD_CARD_H_
 #define __USER_SD_CARD_H_
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include "fatfs.h"
 #include <string.h>
 #include <stdio.h>
@@ -12,7 +8,6 @@ extern "C" {
 
 #define f_unmount( path ) f_mount(NULL, path, 0)
 #define MAX_MESSAGE_SIZE        200
-#define MESSAGE_SIZE            64
 #define NUMBER_ERROR_MESSAGES   20
 
 // TODO: ErrorCode
@@ -91,9 +86,5 @@ void MKDIR_SD(SDcardTypeDef *sdcard, char *folder);
 void scan_files(SDcardTypeDef *sdcard, char *path, struct USBData *usb_data);
 
 void restartSDCard(SDcardTypeDef *sdcard);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

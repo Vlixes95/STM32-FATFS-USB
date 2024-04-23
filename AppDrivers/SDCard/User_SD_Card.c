@@ -10,10 +10,10 @@ void Mount_SD(SDcardTypeDef *sdcard, char *path) {
 
 	sdcard->f_result = f_mount(&sdcard->fs, path, 1);
 	if (sdcard->f_result == FR_OK) {
-		strncpy(sdcard->message, "Successfully mounted SD card...\0",
-				MESSAGE_SIZE); // MESSAGE_SIZE + 1
+		strncpy(sdcard->message, "Successfully mounted SD card...",
+		MAX_MESSAGE_SIZE); // MAX_MESSAGE_SIZE + 1
 	} else {
-		strncpy(sdcard->message, "Error mounting SD card...\0", MESSAGE_SIZE); // MESSAGE_SIZE + 1
+		strncpy(sdcard->message, "Error mounting SD card...", MAX_MESSAGE_SIZE);
 	}
 
 }
@@ -22,10 +22,10 @@ void Unmount_SD(SDcardTypeDef *sdcard, const char *path) {
 
 	sdcard->f_result = f_unmount(path);
 	if (sdcard->f_result == FR_OK) {
-		strncpy(sdcard->message, "Successfully unmounted SD card...\0",
-				MESSAGE_SIZE);
+		strncpy(sdcard->message, "Successfully unmounted SD card...",
+		MAX_MESSAGE_SIZE);
 	} else {
-		strncpy(sdcard->message, "Error unmounting SD card...\0", MESSAGE_SIZE);
+		strncpy(sdcard->message, "Error unmounting SD card...", MAX_MESSAGE_SIZE);
 	}
 
 }
@@ -33,12 +33,12 @@ void Unmount_SD(SDcardTypeDef *sdcard, const char *path) {
 void OpenFile(SDcardTypeDef *sdcard, char *pathName) {
 
 	sdcard->f_result = f_open(&sdcard->file, pathName,
-			FA_CREATE_ALWAYS | FA_WRITE);
+	FA_CREATE_ALWAYS | FA_WRITE);
 	if (sdcard->f_result == FR_OK) {
-		strncpy(sdcard->message, "Successfully opened the file...\0",
-				MESSAGE_SIZE); // +1 ?
+		strncpy(sdcard->message, "Successfully opened the file...",
+		MAX_MESSAGE_SIZE);
 	} else {
-		strncpy(sdcard->message, "Error opening the file...\0", MESSAGE_SIZE);
+		strncpy(sdcard->message, "Error opening the file...", MAX_MESSAGE_SIZE);
 	}
 
 }
@@ -50,11 +50,11 @@ void CreateFileOnly_SD(SDcardTypeDef *sdcard, char *pathName) {
 	if (sdcard->f_result == FR_OK) {
 		sdcard->f_result = f_close(&sdcard->file);
 		if (sdcard->f_result == FR_OK) {
-			strncpy(sdcard->message, "Successfully closed the file...\0",
-					MESSAGE_SIZE);
+			strncpy(sdcard->message, "Successfully closed the file...",
+			MAX_MESSAGE_SIZE);
 		} else {
-			strncpy(sdcard->message, "Error closing the file...\0",
-					MESSAGE_SIZE);
+			strncpy(sdcard->message, "Error closing the file...",
+			MAX_MESSAGE_SIZE);
 		}
 	}
 
@@ -73,18 +73,18 @@ void CreateAndWriteFile_SD(SDcardTypeDef *sdcard, char *pathName, char *buff) {
 					"Successfully written the file. %d number of bytes written...",
 					bw);
 		} else {
-			strncpy(sdcard->message, "Error writing the file...\0",
-					MESSAGE_SIZE);
+			strncpy(sdcard->message, "Error writing the file...",
+			MAX_MESSAGE_SIZE);
 		}
 
 		if (sdcard->f_result == FR_OK) {
 			sdcard->f_result = f_close(&sdcard->file);
 			if (sdcard->f_result == FR_OK) {
-				strncpy(sdcard->message, "Successfully closed the file...\0",
-						MESSAGE_SIZE);
+				strncpy(sdcard->message, "Successfully closed the file...",
+				MAX_MESSAGE_SIZE);
 			} else {
-				strncpy(sdcard->message, "Error closing the file...\0",
-						MESSAGE_SIZE);
+				strncpy(sdcard->message, "Error closing the file...",
+				MAX_MESSAGE_SIZE);
 			}
 
 		}
@@ -103,21 +103,21 @@ void UpdateFile_SD(SDcardTypeDef *sdcard, char *pathName, char *buff) {
 			sprintf(sdcard->message,
 					"Successfully written the file. %d number of bytes written...",
 					bw);
-			strncpy(sdcard->message, "Error opening the file...\0",
-					MESSAGE_SIZE);
+			strncpy(sdcard->message, "Error opening the file...",
+			MAX_MESSAGE_SIZE);
 		} else {
-			strncpy(sdcard->message, "Error writing the file...\0",
-					MESSAGE_SIZE);
+			strncpy(sdcard->message, "Error writing the file...",
+			MAX_MESSAGE_SIZE);
 		}
 
 		if (sdcard->f_result == FR_OK) {
 			sdcard->f_result = f_close(&sdcard->file);
 			if (sdcard->f_result == FR_OK) {
-				strncpy(sdcard->message, "Successfully closed the file...\0",
-						MESSAGE_SIZE);
+				strncpy(sdcard->message, "Successfully closed the file...",
+				MAX_MESSAGE_SIZE);
 			} else {
-				strncpy(sdcard->message, "Error closing the file...\0",
-						MESSAGE_SIZE);
+				strncpy(sdcard->message, "Error closing the file...",
+				MAX_MESSAGE_SIZE);
 			}
 
 		}
@@ -133,11 +133,11 @@ void WriteFile_SD(SDcardTypeDef *sdcard, char *pathName, char *buff) {
 		UINT bw;
 		sdcard->f_result = f_write(&sdcard->file, buff, strlen(buff), &bw);
 		if (sdcard->f_result == FR_OK) {
-			strncpy(sdcard->message, "Successfully written the file...\0",
-					MESSAGE_SIZE);
+			strncpy(sdcard->message, "Successfully written the file...",
+			MAX_MESSAGE_SIZE);
 		} else {
-			strncpy(sdcard->message, "Error opening the file...\0",
-					MESSAGE_SIZE);
+			strncpy(sdcard->message, "Error opening the file...",
+			MAX_MESSAGE_SIZE);
 		}
 	}
 
@@ -147,10 +147,10 @@ void EraseFile_SD(SDcardTypeDef *sdcard, char *pathName) {
 
 	sdcard->f_result = f_unlink(pathName);
 	if (sdcard->f_result == FR_OK) {
-		strncpy(sdcard->message, "Successfully deleted the file...\0",
-				MESSAGE_SIZE);
+		strncpy(sdcard->message, "Successfully deleted the file...",
+		MAX_MESSAGE_SIZE);
 	} else {
-		strncpy(sdcard->message, "Error deleting the file...\0", 28);
+		strncpy(sdcard->message, "Error deleting the file...", 28);
 	}
 
 }
@@ -158,15 +158,14 @@ void EraseFile_SD(SDcardTypeDef *sdcard, char *pathName) {
 void ReadFile_SD(SDcardTypeDef *sdcard, char *pathName, char *buff,
 		UINT *bytesRead) {
 
-	BYTE buffer[1000]; //4096
-	memset(buffer, '\0', 1000);
+	BYTE buffer[1000] = { '0' };
 	sdcard->f_result = f_open(&sdcard->file, pathName, FA_READ);
 
 	if (sdcard->f_result == FR_OK) {
-		strncpy(sdcard->message, "Successfully opened the file...\0",
-				MESSAGE_SIZE);
+		strncpy(sdcard->message, "Successfully opened the file...",
+		MAX_MESSAGE_SIZE);
 	} else {
-		strncpy(sdcard->message, "Error opening the file...\0", MESSAGE_SIZE);
+		strncpy(sdcard->message, "Error opening the file...", MAX_MESSAGE_SIZE);
 	}
 
 	if (sdcard->f_result == FR_OK) {
@@ -184,21 +183,21 @@ void ReadFile_SD(SDcardTypeDef *sdcard, char *pathName, char *buff,
 		strncpy(buff, buffer, *bytesRead);
 
 		if (sdcard->f_result == FR_OK) {
-			strncpy(sdcard->message, "Successfully readed the file...\0",
-					MESSAGE_SIZE);
+			strncpy(sdcard->message, "Successfully readed the file...",
+			MAX_MESSAGE_SIZE);
 		} else {
-			strncpy(sdcard->message, "Error reading the file...\0",
-					MESSAGE_SIZE);
+			strncpy(sdcard->message, "Error reading the file...",
+			MAX_MESSAGE_SIZE);
 		}
 
 		if (sdcard->f_result == FR_OK) {
 			sdcard->f_result = f_close(&sdcard->file);
 			if (sdcard->f_result == FR_OK) {
-				strncpy(sdcard->message, "Successfully closed the file...\0",
-						MESSAGE_SIZE);
+				strncpy(sdcard->message, "Successfully closed the file...",
+				MAX_MESSAGE_SIZE);
 			} else {
-				strncpy(sdcard->message, "Error closing the file...\0",
-						MESSAGE_SIZE);
+				strncpy(sdcard->message, "Error closing the file...",
+				MAX_MESSAGE_SIZE);
 			}
 
 		}
@@ -212,11 +211,11 @@ void FileStatus_SD(SDcardTypeDef *sdcard, const char *fileName,
 
 	sdcard->f_result = f_stat(fileName, fileInfo);
 	if (sdcard->f_result == FR_OK) {
-		strncpy(sdcard->message, "Successfully got the file status...\0",
-				MESSAGE_SIZE);
+		strncpy(sdcard->message, "Successfully got the file status...",
+		MAX_MESSAGE_SIZE);
 	} else {
-		strncpy(sdcard->message, "Error getting file status...\0",
-				MESSAGE_SIZE);
+		strncpy(sdcard->message, "Error getting file status...",
+		MAX_MESSAGE_SIZE);
 	}
 
 }
@@ -225,12 +224,12 @@ void MKDIR_SD(SDcardTypeDef *sdcard, char *folder) {
 
 	sdcard->f_result = f_mkdir(folder);
 	if (sdcard->f_result == FR_OK) {
-		strncpy(sdcard->message, "Succsessfully creating a folder",
-				MESSAGE_SIZE);
+		strncpy(sdcard->message, "Successfully creating a folder...",
+		MAX_MESSAGE_SIZE);
 	}
 
 	if (sdcard->f_result != FR_EXIST) {
-		strncpy(sdcard->message, "Error creating a folder...\0", MESSAGE_SIZE);
+		strncpy(sdcard->message, "Error creating a folder...", MAX_MESSAGE_SIZE);
 	}
 
 	sdcard->f_result = FR_OK;

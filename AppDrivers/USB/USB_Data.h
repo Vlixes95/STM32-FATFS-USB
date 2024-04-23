@@ -3,6 +3,9 @@
 
 #include "stdbool.h"
 
+#define FILE_NAME_MAX_LENGHT 50
+#define CONTENT_MAX_LENGHT 1000
+
 enum COMMANDS {
 	WRITE = 'w',
 	READ = 'r',
@@ -21,8 +24,8 @@ enum COMMANDS {
 
 struct USBData {
 	char command;
-	char fileName[50];
-	char content[1000];
+	char fileName[FILE_NAME_MAX_LENGHT];
+	char content[CONTENT_MAX_LENGHT];
 };
 
 struct UsbDataReceived {

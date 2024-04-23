@@ -37,7 +37,6 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
 #define TESTING
 
 /* USER CODE END PD */
@@ -125,7 +124,7 @@ int main(void) {
 	usb_data_received.is_new_data = false;
 
 	Mount_SD(&sdcard, "");
-	MKDIR_SD(&sdcard, "logs\0");
+	MKDIR_SD(&sdcard, "logs\0"); // Create logs folder
 
 	while (true) {
 		if (usb_data_received.is_new_data) {
@@ -153,7 +152,7 @@ int main(void) {
 
 				if (sdcard.f_result == FR_OK) {
 					reading[size] = '\0';
-					strcpy(usb_data_received.usb_data.content, reading);
+					strncpy(usb_data_received.usb_data.content, reading, CONTENT_MAX_LENGHT);
 				}
 
 			} else if (usb_data_received.usb_data.command == DELETE) {
@@ -164,7 +163,7 @@ int main(void) {
 
 				if (sdcard.f_result == FR_OK) {
 					reading[size] = '\0';
-					strcpy(usb_data_received.usb_data.content, "Success\0");
+					strncpy(usb_data_received.usb_data.content, "Success\0", CONTENT_MAX_LENGHT);
 				}
 
 			} else if (usb_data_received.usb_data.command == UPDATE) {
@@ -182,7 +181,7 @@ int main(void) {
 
 				if (sdcard.f_result == FR_OK) {
 					reading[size] = '\0';
-					strcpy(usb_data_received.usb_data.content, reading);
+					strncpy(usb_data_received.usb_data.content, reading, CONTENT_MAX_LENGHT);
 				}
 
 			} else if (usb_data_received.usb_data.command == PRINT) {
@@ -190,9 +189,9 @@ int main(void) {
 				char path[256];
 				path[0] = '\0';
 				if (sdcard.f_result == FR_OK) {
-					strcpy(path, "LOGS\0");
+					strncpy(path, "LOGS", 5);
 					scan_files(&sdcard, path, &usb_data_received.usb_data);
-					strcpy(usb_data_received.usb_data.fileName, "-");
+					strncpy(usb_data_received.usb_data.fileName, "-", FILE_NAME_MAX_LENGHT);
 				}
 
 			} else {
@@ -204,8 +203,8 @@ int main(void) {
 			// TODO: Create a usbDataToSend
 			if (sdcard.f_result != FR_OK) {
 				usb_data_received.usb_data.command = C_ERROR;
-				strcpy(usb_data_received.usb_data.fileName, "-");
-				strcpy(usb_data_received.usb_data.content, sdcard.message);
+				strncpy(usb_data_received.usb_data.fileName, "-", FILE_NAME_MAX_LENGHT);
+				strncpy(usb_data_received.usb_data.content, sdcard.message, CONTENT_MAX_LENGHT);
 			}
 
 			UnpackMSG(&usb_data_received.usb_data, data);
@@ -330,6 +329,11 @@ void testing(SDcardTypeDef sdcard) {
 
 	if (sdcard.f_result == FR_OK) {
 		CreateAndWriteFile_SD(&sdcard, "file_2.txt",
+				"Lorem ipsum dolor sit amet.\n");
+	}
+
+	if (sdcard.f_result == FR_OK) {
+		CreateAndWriteFile_SD(&sdcard, "23_04_2024.txt",
 				"Lorem ipsum dolor sit amet.\n");
 	}
 
