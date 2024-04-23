@@ -270,13 +270,14 @@ static int8_t CDC_Receive_FS ( uint8_t *Buf, uint32_t *Len ) {
     USBD_CDC_ReceivePacket( &hUsbDeviceFS );
 
     if(*Len != 1 ){
+
 		memset( receive_buffer, '\0', 4096 ); // all the buffer is set to '\0'
 		memcpy( receive_buffer, Buf, *Len );
 
 		memset(usb_data_received.usb_data.content, 0, 1000);
 		memset(usb_data_received.usb_data.fileName, 0, 50);
 
-		PackMSG( receive_buffer, ( uint8_t ) *Len, &usb_data_received );
+		packMSG( receive_buffer, ( uint8_t ) *Len, &usb_data_received );
 		usb_data_received.is_new_data = true;
     }
 

@@ -17,11 +17,11 @@ extern "C" {
 
 // TODO: ErrorCode
 typedef struct {
-    FATFS fs;
-    FIL file;
-    FRESULT fResult;
-    char message[MAX_MESSAGE_SIZE];
-    UINT br, bw;
+	FATFS fs;
+	FIL file;
+	FRESULT f_result;
+	char message[MAX_MESSAGE_SIZE];
+	UINT br, bw;
 } SDcardTypeDef;
 
 /* (0) Succeeded */
@@ -68,29 +68,29 @@ typedef struct {
 //        { "Given parameter is invalid" }
 //};
 
-void Mount_SD ( SDcardTypeDef *sdcard, char *path );
+void Mount_SD(SDcardTypeDef *sdcard, char *path);
 
-void Unmount_SD ( SDcardTypeDef *sdcard, const char *path );
+void Unmount_SD(SDcardTypeDef *sdcard, const char *path);
 
-void CreateFileOnly_SD ( SDcardTypeDef *sdcard, char *pathName );
+void CreateFileOnly_SD(SDcardTypeDef *sdcard, char *pathName);
 
-void CreateAndWriteFile_SD ( SDcardTypeDef *sdcard, char *pathName, char *buff );
+void CreateAndWriteFile_SD(SDcardTypeDef *sdcard, char *pathName, char *buff);
 
-void UpdateFile_SD ( SDcardTypeDef *sdcard, char *pathName, char *buff );
+void UpdateFile_SD(SDcardTypeDef *sdcard, char *pathName, char *buff);
 
-void FileStatus_SD ( SDcardTypeDef *sdcard, const char *fileName, FILINFO *fileInfo );
+void FileStatus_SD(SDcardTypeDef *sdcard, const char *fileName, FILINFO *fileInfo);
 
-void EraseFile_SD ( SDcardTypeDef *sdcard, char *pathName );
+void EraseFile_SD(SDcardTypeDef *sdcard, char *pathName);
 
-void WriteFile_SD ( SDcardTypeDef *sdcard, char *pathName, char *buff );
+void WriteFile_SD(SDcardTypeDef *sdcard, char *pathName, char *buff);
 
-void ReadFile_SD ( SDcardTypeDef *sdcard, char *pathName, char *buff, UINT *bytesRead );
+void ReadFile_SD(SDcardTypeDef *sdcard, char *pathName, char *buff,	UINT *bytesRead);
 
-void MKDIR_SD ( SDcardTypeDef *sdcard, char *folder );
+void MKDIR_SD(SDcardTypeDef *sdcard, char *folder);
 
-void scan_files ( SDcardTypeDef *sdcard, char *path, struct USBData *usb_data );
+void scan_files(SDcardTypeDef *sdcard, char *path, struct USBData *usb_data);
 
-void restartSDCard ( SDcardTypeDef *sdcard );
+void restartSDCard(SDcardTypeDef *sdcard);
 
 #ifdef __cplusplus
 }

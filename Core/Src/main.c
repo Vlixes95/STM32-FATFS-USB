@@ -138,58 +138,63 @@ int main(void) {
 
 			if (usb_data_received.usb_data.command == WRITE) {
 
-				if (sdcard.fResult == FR_OK) {
+				if (sdcard.f_result == FR_OK) {
 					CreateAndWriteFile_SD(&sdcard,
 							usb_data_received.usb_data.fileName,
 							usb_data_received.usb_data.content);
 				}
+
 			} else if (usb_data_received.usb_data.command == READ) {
 
-				if (sdcard.fResult == FR_OK) {
+				if (sdcard.f_result == FR_OK) {
 					ReadFile_SD(&sdcard, usb_data_received.usb_data.fileName,
 							reading, &size);
 				}
 
-				if (sdcard.fResult == FR_OK) {
+				if (sdcard.f_result == FR_OK) {
 					reading[size] = '\0';
 					strcpy(usb_data_received.usb_data.content, reading);
 				}
+
 			} else if (usb_data_received.usb_data.command == DELETE) {
 
-				if (sdcard.fResult == FR_OK) {
+				if (sdcard.f_result == FR_OK) {
 					EraseFile_SD(&sdcard, usb_data_received.usb_data.fileName);
 				}
 
-				if (sdcard.fResult == FR_OK) {
+				if (sdcard.f_result == FR_OK) {
 					reading[size] = '\0';
 					strcpy(usb_data_received.usb_data.content, "Success\0");
 				}
+
 			} else if (usb_data_received.usb_data.command == UPDATE) {
 
-				if (sdcard.fResult == FR_OK) {
+				if (sdcard.f_result == FR_OK) {
 					// TODO: update or erase content
 					UpdateFile_SD(&sdcard, usb_data_received.usb_data.fileName,
 							usb_data_received.usb_data.content);
 				}
 
-				if (sdcard.fResult == FR_OK) {
+				if (sdcard.f_result == FR_OK) {
 					ReadFile_SD(&sdcard, usb_data_received.usb_data.fileName,
 							reading, &size);
 				}
 
-				if (sdcard.fResult == FR_OK) {
+				if (sdcard.f_result == FR_OK) {
 					reading[size] = '\0';
 					strcpy(usb_data_received.usb_data.content, reading);
 				}
+
 			} else if (usb_data_received.usb_data.command == PRINT) {
 
 				char path[256];
 				path[0] = '\0';
-				if (sdcard.fResult == FR_OK) {
+				if (sdcard.f_result == FR_OK) {
 					strcpy(path, "LOGS\0");
 					scan_files(&sdcard, path, &usb_data_received.usb_data);
 					strcpy(usb_data_received.usb_data.fileName, "-");
 				}
+
 			} else {
 				usb_data_received.usb_data.command = C_ERROR;
 			}
@@ -197,7 +202,7 @@ int main(void) {
 			usb_data_received.is_new_data = false;
 
 			// TODO: Create a usbDataToSend
-			if (sdcard.fResult != FR_OK) {
+			if (sdcard.f_result != FR_OK) {
 				usb_data_received.usb_data.command = C_ERROR;
 				strcpy(usb_data_received.usb_data.fileName, "-");
 				strcpy(usb_data_received.usb_data.content, sdcard.message);
@@ -318,39 +323,39 @@ void testing(SDcardTypeDef sdcard) {
 	UINT size = 0;
 	Mount_SD(&sdcard, "");
 
-	if (sdcard.fResult == FR_OK) {
+	if (sdcard.f_result == FR_OK) {
 		CreateAndWriteFile_SD(&sdcard, "file_1.txt",
 				"Lorem ipsum dolor sit amet.\n");
 	}
 
-	if (sdcard.fResult == FR_OK) {
+	if (sdcard.f_result == FR_OK) {
 		CreateAndWriteFile_SD(&sdcard, "file_2.txt",
 				"Lorem ipsum dolor sit amet.\n");
 	}
 
-	if (sdcard.fResult == FR_OK) {
+	if (sdcard.f_result == FR_OK) {
 		ReadFile_SD(&sdcard, "3.txt", reading, &size);
 		HAL_Delay(1000);
 		CDC_Transmit_FS((uint8_t*) reading, size);
 		HAL_Delay(1);
 	}
 
-	if (sdcard.fResult == FR_OK) {
+	if (sdcard.f_result == FR_OK) {
 		UpdateFile_SD(&sdcard, "file_1.txt", "File created.\n");
 	}
 
-	if (sdcard.fResult == FR_OK) {
+	if (sdcard.f_result == FR_OK) {
 		UINT bytes = 0;
 		ReadFile_SD(&sdcard, "file_1.txt", reading, &bytes);
 	}
 
-	if (sdcard.fResult == FR_OK) {
+	if (sdcard.f_result == FR_OK) {
 		EraseFile_SD(&sdcard, "file_2.txt");
 	}
 
 	MKDIR_SD(&sdcard, "folder");
 
-	if (sdcard.fResult == FR_OK) {
+	if (sdcard.f_result == FR_OK) {
 		CreateAndWriteFile_SD(&sdcard, "folder/file_1.txt",
 				"Folder created.\n");
 	}

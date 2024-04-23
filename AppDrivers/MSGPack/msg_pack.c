@@ -2,7 +2,7 @@
 
 #include "../SDCard/user_sd_card.h"
 
-void PackMSG(const char *stringToPack, uint32_t stringSize, struct UsbDataReceived *usb_data_received) {
+void packMSG(const char *stringToPack, uint32_t stringSize, struct UsbDataReceived *usb_data_received) {
 	DWORD i = 0;
 	bool init = false;
 	uint8_t size = 0;

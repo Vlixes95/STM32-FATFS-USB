@@ -5,7 +5,7 @@
 
 #include "../USB/usb_data.h"
 
-void PackMSG(const char *stringToPack, uint32_t stringSize,	struct UsbDataReceived *usb_data_received);
+void packMSG(const char *stringToPack, uint32_t stringSize,	struct UsbDataReceived *usb_data_received);
 void UnpackMSG(struct USBData *usb_data, char *textJson);
 
 #endif
